@@ -172,7 +172,7 @@ public final class ChatSession implements ConnectionListener {
         if (getState() != ConnectionState.DISCONNECTED) {
             return;
         }
-        clearConversations();
+        resetConversations();
         state.set(ConnectionState.CONNECTING);
         ServerConnection newConnection = new ServerConnection(this);
         connection = newConnection;
@@ -427,11 +427,19 @@ public final class ChatSession implements ConnectionListener {
         onlineUsers.clear();
     }
 
-    private void clearConversations() {
+    /**
+     * Empties every conversation before a new login. Private conversations are
+     * forgotten, so they are announced again if the same user writes after
+     * reconnecting; the general conversation keeps its list because views stay bound to it.
+     */
+    void resetConversations() {
         allEntries.clear();
         privateConversations.clear();
-        for (ObservableList<ChatEntry> list : conversations.values()) {
-            list.clear();
+        conversations.keySet().removeIf(key -> !GENERAL.equals(key));
+        conversationViews.keySet().removeIf(key -> !GENERAL.equals(key));
+        ObservableList<ChatEntry> general = conversations.get(GENERAL);
+        if (general != null) {
+            general.clear();
         }
     }
 }

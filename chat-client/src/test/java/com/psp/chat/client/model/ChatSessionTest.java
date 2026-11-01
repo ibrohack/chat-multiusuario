@@ -183,6 +183,18 @@ class ChatSessionTest {
     }
 
     @Test
+    void privateConversationIsAnnouncedAgainAfterAReset() {
+        loginAsAna();
+        session.packetReceived(new TextMessage("luis", "ana", "hey", TIME));
+
+        session.resetConversations();
+        session.packetReceived(new TextMessage("luis", "ana", "otra vez", TIME));
+
+        assertEquals(List.of("luis"), session.getPrivateConversations());
+        assertEquals(1, session.getConversation("luis").size());
+    }
+
+    @Test
     void describeErrorTranslatesCauses() {
         ConnectionSettings settings = new ConnectionSettings("127.0.0.1", 5000, "ana");
 
