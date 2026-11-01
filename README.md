@@ -64,6 +64,15 @@ Open one terminal per client and start the client in each:
 mvn -q -pl chat-client javafx:run
 ```
 
+## Choosing and switching the UI
+
+When the client starts, it asks **"¿Qué interfaz quieres usar?"**:
+
+- **Clásica (rúbrica)** is the window of the course screenshot.
+- **Avanzada (usuarios y pestañas)** shows the connected users and one tab per conversation.
+
+Both views run on the same session. To switch while connected, use the **Vista** menu (**Clásica** / **Avanzada**). Switching keeps the connection and the whole message history; the server does not even notice.
+
 ## Using the classic UI ("Clásica")
 
 The classic view reproduces the window of the course screenshot. It has the connection bar at the top, every message in one list, and the private-message controls at the bottom.
@@ -84,6 +93,22 @@ The classic view reproduces the window of the course screenshot. It has the conn
    - Gray lines report users joining and leaving, for example `— luis se ha conectado —`.
    - Errors appear in red in the list and in a dialog.
 5. **Disconnect.** Press **Desconectar** or close the window. The other users see that you left.
+
+## Using the advanced UI ("Avanzada")
+
+The advanced view keeps the same connection bar. It replaces the «Privado» checkbox and the «Para» field with conversation tabs: **the selected tab decides who receives your message**.
+
+- **Connected users.** The list on the left, titled **Conectados (n)**, shows everybody else who is online and updates live as people join and leave.
+- **General tab.** Public chat; this tab cannot be closed. The message field shows `Mensaje para General`.
+- **Private tabs.**
+  - **Double-click** a user in the list to open (or jump to) a private tab with that user. The field then shows `Mensaje privado para <user>`.
+  - When someone writes to you privately, a tab with their name opens **without stealing your focus**.
+  - Close a private tab with its **×**. The conversation is kept, so reopening the tab shows the history again.
+- **Unread counters.** A tab that is not selected shows how many new lines it has, for example `luis (2)` or `General (3)`. The counter resets when you open the tab.
+- **Users who leave.** If the other user of a private tab disconnects:
+  - the tab turns grey and italic;
+  - sending is disabled while that tab is selected;
+  - everything is re-enabled if the user comes back.
 
 Messages you may see:
 
