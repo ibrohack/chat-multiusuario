@@ -1,0 +1,27 @@
+#!/bin/sh
+# Validates that the commit header follows Conventional Commits 1.0.0.
+# Enable with: git config core.hooksPath .githooks
+
+header=$(head -n 1 "$1")
+
+case "$header" in
+  "Merge "*|"Revert \""*|"fixup! "*|"squash! "*) exit 0 ;;
+esac
+
+pattern='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9-]+\))?!?: .+'
+
+if ! printf '%s\n' "$header" | grep -Eq "$pattern"; then
+  echo "commit-msg: the header does not follow Conventional Commits." >&2
+  echo "  expected: <type>(<scope>): <description>" >&2
+  echo "  types:    feat fix docs style refactor perf test build ci chore revert" >&2
+  echo "  example:  feat(server): add statistics monitor thread" >&2
+  exit 1
+fi
+
+length=$(printf '%s' "$header" | wc -m | tr -d ' ')
+if [ "$length" -gt 72 ]; then
+  echo "commit-msg: the header has $length characters (max 72)." >&2
+  exit 1
+fi
+
+exit 0
