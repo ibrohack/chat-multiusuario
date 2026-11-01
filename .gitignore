@@ -1,0 +1,81 @@
+# ===== Maven =====
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+.flattened-pom.xml
+
+# ===== Java =====
+*.class
+*.log
+*.ctxt
+.mtj.tmp/
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+hs_err_pid*
+replay_pid*
+
+# ===== JavaFX =====
+# jlink / jpackage output
+/image/
+/dist/
+*.jmod
+
+# ===== Docs =====
+docs/
+
+# ===== IntelliJ IDEA =====
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# ===== Eclipse =====
+.project
+.classpath
+.settings/
+.metadata/
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.loadpath
+.recommenders/
+.factorypath
+.apt_generated/
+.apt_generated_test/
+
+# ===== NetBeans =====
+nbproject/private/
+nbbuild/
+nbdist/
+nb-configuration.xml
+nbactions.xml
+.nb-gradle/
+
+# ===== VS Code =====
+.vscode/
+*.code-workspace
+.history/
+
+# ===== OS files =====
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
