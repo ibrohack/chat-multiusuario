@@ -2,6 +2,18 @@
 
 Notable changes per release, grouped by [Conventional Commits](https://www.conventionalcommits.org/) type.
 
+## 1.2.0 — 2026-11-01
+
+Image sharing and the delivery documentation.
+
+### Features
+- **images:** add images to protocol, server and session model
+- **advanced-ui:** send and display images
+
+### Documentation
+- explain image sharing
+- add screenshots and finalize delivery docs
+
 ## 1.1.0 — 2026-11-01
 
 Advanced user interface and live view switching.
