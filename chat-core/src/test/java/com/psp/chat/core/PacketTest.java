@@ -1,7 +1,9 @@
 package com.psp.chat.core;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -46,6 +48,23 @@ class PacketTest {
         for (Packet packet : packets) {
             assertEquals(packet, roundTrip(packet));
         }
+    }
+
+    @Test
+    void imagesSurviveSerialization() throws Exception {
+        byte[] data = {1, 2, 3};
+
+        ImageRequest request = (ImageRequest) roundTrip(new ImageRequest(null, "foto.png", data));
+        ImageMessage message = (ImageMessage) roundTrip(new ImageMessage("ana", "luis", "foto.png", data, TIME));
+
+        assertNull(request.recipient());
+        assertEquals("foto.png", request.fileName());
+        assertArrayEquals(data, request.data());
+        assertEquals(List.of("ana", "luis", "foto.png"), List.of(message.sender(), message.recipient(), message.fileName()));
+        assertArrayEquals(data, message.data());
+        assertEquals(TIME, message.timestamp());
+        assertTrue(message.isPrivate());
+        assertFalse(new ImageMessage("ana", null, "foto.png", data, TIME).isPrivate());
     }
 
     @Test

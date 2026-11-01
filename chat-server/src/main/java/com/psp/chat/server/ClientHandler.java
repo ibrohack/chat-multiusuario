@@ -3,6 +3,8 @@ package com.psp.chat.server;
 import com.psp.chat.core.ClientPacket;
 import com.psp.chat.core.ErrorCode;
 import com.psp.chat.core.ErrorNotice;
+import com.psp.chat.core.ImageMessage;
+import com.psp.chat.core.ImageRequest;
 import com.psp.chat.core.LoginAccepted;
 import com.psp.chat.core.LoginRejected;
 import com.psp.chat.core.LoginRequest;
@@ -20,6 +22,8 @@ import java.net.Socket;
 import java.time.Instant;
 import java.time.LocalTime;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -130,42 +134,83 @@ final class ClientHandler implements Runnable, ConnectedClient {
                 }
                 case LoginRequest repeated -> send(new ErrorNotice(ErrorCode.ALREADY_LOGGED_IN, null));
                 case TextRequest request -> deliverText(request);
+                case ImageRequest request -> deliverImage(request);
             }
         }
     }
 
     /**
-     * Validates a text request and delivers it: to everyone if it is public, or to
-     * the recipient plus an echo to the sender if it is private.
+     * Validates a text request and delivers it.
      */
     private void deliverText(TextRequest request) {
-        String sender = getUsername();
         if (!Protocol.isValidText(request.text())) {
             send(new ErrorNotice(ErrorCode.INVALID_TEXT, null));
             return;
         }
-        if (request.recipient() == null) {
-            room.addToHistory(new MessageRecord(LocalTime.now(), sender, null, request.text()));
-            LOG.info("[PUBLIC] {}: {}", sender, request.text());
-            room.broadcast(new TextMessage(sender, null, request.text(), Instant.now()));
+        String sender = getUsername();
+        String text = request.text();
+        route(request.recipient(), text,
+                recipientName -> new TextMessage(sender, recipientName, text, Instant.now()),
+                recipientName -> {
+                    if (recipientName == null) {
+                        LOG.info("[PUBLIC] {}: {}", sender, text);
+                    } else {
+                        LOG.info("[PRIVATE] {} -> {}: {}", sender, recipientName, text);
+                    }
+                });
+    }
+
+    /**
+     * Validates an image request and delivers it; the history keeps a description, not the bytes.
+     */
+    private void deliverImage(ImageRequest request) {
+        if (!Protocol.isValidImage(request.data())) {
+            send(new ErrorNotice(ErrorCode.INVALID_IMAGE, null));
             return;
         }
-        if (request.recipient().equalsIgnoreCase(sender)) {
+        String sender = getUsername();
+        long kilobytes = (request.data().length + 1023L) / 1024L;
+        String description = "[image " + request.fileName() + ", " + kilobytes + " KB]";
+        route(request.recipient(), description,
+                recipientName -> new ImageMessage(sender, recipientName, request.fileName(), request.data(),
+                        Instant.now()),
+                recipientName -> LOG.info("[IMAGE] {} -> {}: {} ({} KB)", sender,
+                        recipientName == null ? "all" : recipientName, request.fileName(), kilobytes));
+    }
+
+    /**
+     * Delivers a message to everyone if it is public, or to the recipient plus an echo
+     * to the sender if it is private, recording it in the history.
+     *
+     * @param recipient      requested recipient, or {@code null} for everyone
+     * @param historyContent text recorded in the history
+     * @param packetFor      builds the packet for the canonical recipient name ({@code null} if public)
+     * @param logDelivery    logs the delivery for the canonical recipient name ({@code null} if public)
+     */
+    private void route(String recipient, String historyContent, Function<String, ServerPacket> packetFor,
+            Consumer<String> logDelivery) {
+        String sender = getUsername();
+        if (recipient == null) {
+            room.addToHistory(new MessageRecord(LocalTime.now(), sender, null, historyContent));
+            logDelivery.accept(null);
+            room.broadcast(packetFor.apply(null));
+            return;
+        }
+        if (recipient.equalsIgnoreCase(sender)) {
             send(new ErrorNotice(ErrorCode.PRIVATE_TO_SELF, null));
             return;
         }
-        Optional<ConnectedClient> target = room.findClient(request.recipient());
+        Optional<ConnectedClient> target = room.findClient(recipient);
         if (target.isEmpty()) {
-            send(new ErrorNotice(ErrorCode.USER_NOT_CONNECTED, request.recipient()));
+            send(new ErrorNotice(ErrorCode.USER_NOT_CONNECTED, recipient));
             return;
         }
-        ConnectedClient recipient = target.get();
-        String recipientName = recipient.getUsername();
-        TextMessage message = new TextMessage(sender, recipientName, request.text(), Instant.now());
-        room.addToHistory(new MessageRecord(LocalTime.now(), sender, recipientName, request.text()));
-        LOG.info("[PRIVATE] {} -> {}: {}", sender, recipientName, request.text());
-        recipient.send(message);
-        send(message);
+        String recipientName = target.get().getUsername();
+        room.addToHistory(new MessageRecord(LocalTime.now(), sender, recipientName, historyContent));
+        logDelivery.accept(recipientName);
+        ServerPacket packet = packetFor.apply(recipientName);
+        target.get().send(packet);
+        send(packet);
     }
 
     @Override

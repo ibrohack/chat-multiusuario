@@ -4,6 +4,8 @@ import com.psp.chat.client.network.ConnectionListener;
 import com.psp.chat.client.network.LoginRejectedException;
 import com.psp.chat.client.network.ServerConnection;
 import com.psp.chat.core.ErrorNotice;
+import com.psp.chat.core.ImageMessage;
+import com.psp.chat.core.ImageRequest;
 import com.psp.chat.core.LoginAccepted;
 import com.psp.chat.core.LoginRejected;
 import com.psp.chat.core.Protocol;
@@ -13,9 +15,12 @@ import com.psp.chat.core.TextMessage;
 import com.psp.chat.core.TextRequest;
 import com.psp.chat.core.UserEvent;
 import com.psp.chat.core.UserEventType;
+import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -219,6 +224,50 @@ public final class ChatSession implements ConnectionListener {
     }
 
     /**
+     * Sends an image file after checking it. The file is read on a background thread.
+     *
+     * @param recipient name of the private recipient, or {@code null} for the general chat
+     * @param file      image file to send
+     * @return {@code true} if the image passed the checks and is being sent
+     */
+    public boolean sendImage(String recipient, Path file) {
+        long size;
+        try {
+            size = Files.size(file);
+        } catch (IOException e) {
+            onError.accept(UiText.cannotReadImage(e.getMessage()));
+            return false;
+        }
+        if (size == 0 || size > Protocol.MAX_IMAGE_BYTES) {
+            onError.accept(UiText.INVALID_IMAGE);
+            return false;
+        }
+        if (recipient != null && recipient.equalsIgnoreCase(getUsername())) {
+            onError.accept(UiText.PRIVATE_TO_SELF);
+            return false;
+        }
+        if (getState() != ConnectionState.CONNECTED || connection == null) {
+            onError.accept(UiText.NOT_CONNECTED);
+            return false;
+        }
+        ServerConnection target = connection;
+        String fileName = file.getFileName().toString();
+        Task<byte[]> reading = new Task<>() {
+            @Override
+            protected byte[] call() throws IOException {
+                return Files.readAllBytes(file);
+            }
+        };
+        reading.setOnSucceeded(event -> target.send(new ImageRequest(recipient, fileName, reading.getValue())));
+        reading.setOnFailed(event -> onError.accept(
+                UiText.cannotReadImage(String.valueOf(reading.getException().getMessage()))));
+        Thread reader = new Thread(reading, "image-reader");
+        reader.setDaemon(true);
+        reader.start();
+        return true;
+    }
+
+    /**
      * Logs out and closes the connection. Does nothing if there is no session.
      */
     public void disconnect() {
@@ -304,6 +353,7 @@ public final class ChatSession implements ConnectionListener {
     private void handle(ServerPacket packet) {
         switch (packet) {
             case TextMessage message -> addMessage(ChatEntry.of(message), message.sender(), message.recipient());
+            case ImageMessage message -> addMessage(ChatEntry.of(message), message.sender(), message.recipient());
             case UserEvent event -> handleUserEvent(event);
             case ErrorNotice notice -> {
                 String text = describe(notice);

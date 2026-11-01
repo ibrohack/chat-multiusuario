@@ -1,5 +1,6 @@
 package com.psp.chat.client.model;
 
+import com.psp.chat.core.ImageMessage;
 import com.psp.chat.core.TextMessage;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -38,6 +39,18 @@ public record ChatEntry(EntryType type, String sender, String recipient, String 
         EntryType type = message.isPrivate() ? EntryType.PRIVATE : EntryType.PUBLIC;
         LocalTime time = LocalTime.ofInstant(message.timestamp(), ZoneId.systemDefault());
         return new ChatEntry(type, message.sender(), message.recipient(), message.text(), null, time);
+    }
+
+    /**
+     * Creates the line for an image.
+     *
+     * @param message image received from the server
+     * @return a public or private line whose text is the file name
+     */
+    public static ChatEntry of(ImageMessage message) {
+        EntryType type = message.isPrivate() ? EntryType.PRIVATE : EntryType.PUBLIC;
+        LocalTime time = LocalTime.ofInstant(message.timestamp(), ZoneId.systemDefault());
+        return new ChatEntry(type, message.sender(), message.recipient(), message.fileName(), message.data(), time);
     }
 
     /**

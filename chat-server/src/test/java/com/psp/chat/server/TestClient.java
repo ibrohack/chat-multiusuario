@@ -3,6 +3,7 @@ package com.psp.chat.server;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import com.psp.chat.core.ClientPacket;
+import com.psp.chat.core.ImageMessage;
 import com.psp.chat.core.LoginRequest;
 import com.psp.chat.core.ObjectChannel;
 import com.psp.chat.core.ServerPacket;
@@ -61,7 +62,7 @@ final class TestClient implements Closeable {
         try {
             while (true) {
                 ServerPacket packet = channel.receive(ServerPacket.class);
-                if (packet instanceof TextMessage) {
+                if (packet instanceof TextMessage || packet instanceof ImageMessage) {
                     fail("Unexpected message: " + packet);
                 }
             }

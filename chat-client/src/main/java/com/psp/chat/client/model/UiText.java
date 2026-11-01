@@ -202,6 +202,16 @@ public final class UiText {
     }
 
     /**
+     * Builds the error shown when an image file cannot be read.
+     *
+     * @param message technical detail of the problem
+     * @return the error text
+     */
+    public static String cannotReadImage(String message) {
+        return "No se pudo leer la imagen: " + message;
+    }
+
+    /**
      * Builds the error shown when a private recipient is not connected.
      *
      * @param username name of the recipient

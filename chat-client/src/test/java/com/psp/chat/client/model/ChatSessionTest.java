@@ -1,5 +1,6 @@
 package com.psp.chat.client.model;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -7,19 +8,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.psp.chat.client.network.LoginRejectedException;
 import com.psp.chat.core.ErrorCode;
 import com.psp.chat.core.ErrorNotice;
+import com.psp.chat.core.ImageMessage;
 import com.psp.chat.core.LoginAccepted;
+import com.psp.chat.core.Protocol;
 import com.psp.chat.core.RejectionReason;
 import com.psp.chat.core.ServerShutdown;
 import com.psp.chat.core.TextMessage;
 import com.psp.chat.core.UserEvent;
 import com.psp.chat.core.UserEventType;
+import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 class ChatSessionTest {
 
@@ -150,6 +157,29 @@ class ChatSessionTest {
     void sendTextReportsThatNothingWasSent() {
         assertFalse(session.sendText(null, "   "));
         assertFalse(session.sendText(null, "hola"));
+    }
+
+    @Test
+    void publicImageGoesToGeneralWithItsBytes() {
+        loginAsAna();
+        byte[] bytes = {1, 2, 3};
+
+        session.packetReceived(new ImageMessage("luis", null, "foto.png", bytes, TIME));
+
+        ChatEntry entry = last(session.getConversation(ChatSession.GENERAL));
+        assertTrue(entry.isImage());
+        assertEquals("foto.png", entry.text());
+        assertArrayEquals(bytes, entry.image());
+    }
+
+    @Test
+    void oversizedImageReportsError(@TempDir Path dir) throws IOException {
+        loginAsAna();
+        Path file = dir.resolve("big.png");
+        Files.write(file, new byte[Protocol.MAX_IMAGE_BYTES + 1]);
+
+        assertFalse(session.sendImage(null, file));
+        assertEquals(List.of("La imagen está vacía o supera el máximo de 2 MB."), errors);
     }
 
     @Test

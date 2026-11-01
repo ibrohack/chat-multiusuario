@@ -1,10 +1,14 @@
 package com.psp.chat.server;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.psp.chat.core.ErrorCode;
 import com.psp.chat.core.ErrorNotice;
+import com.psp.chat.core.ImageMessage;
+import com.psp.chat.core.ImageRequest;
+import com.psp.chat.core.Protocol;
 import com.psp.chat.core.TextMessage;
 import com.psp.chat.core.TextRequest;
 import java.time.Duration;
@@ -88,6 +92,45 @@ class ChatServerMessagingTest {
         ana.send(new TextRequest(null, "x".repeat(1001)));
 
         assertEquals(new ErrorNotice(ErrorCode.INVALID_TEXT, null), ana.await(ErrorNotice.class));
+    }
+
+    @Test
+    void publicImageReachesEveryone() throws Exception {
+        byte[] bytes = {1, 2, 3, 4};
+
+        ana.send(new ImageRequest(null, "foto.png", bytes));
+
+        for (TestClient client : List.of(ana, luis, eva)) {
+            ImageMessage message = client.await(ImageMessage.class);
+            assertEquals("ana", message.sender());
+            assertNull(message.recipient());
+            assertEquals("foto.png", message.fileName());
+            assertArrayEquals(bytes, message.data());
+        }
+    }
+
+    @Test
+    void privateImageReachesOnlyRecipientAndSender() throws Exception {
+        ana.send(new ImageRequest("luis", "foto.png", new byte[] {1}));
+
+        assertEquals("luis", luis.await(ImageMessage.class).recipient());
+        assertEquals("luis", ana.await(ImageMessage.class).recipient());
+        eva.assertNoMessages(Duration.ofMillis(300));
+    }
+
+    @Test
+    void oversizedImageNotifiesSender() throws Exception {
+        ana.send(new ImageRequest(null, "big.png", new byte[Protocol.MAX_IMAGE_BYTES + 1]));
+
+        assertEquals(new ErrorNotice(ErrorCode.INVALID_IMAGE, null), ana.await(ErrorNotice.class));
+    }
+
+    @Test
+    void imageHistoryOmitsBytes() throws Exception {
+        ana.send(new ImageRequest(null, "foto.png", new byte[1024]));
+        luis.await(ImageMessage.class);
+
+        assertEquals("[image foto.png, 1 KB]", server.getRoom().getStatus().lastMessage().content());
     }
 
     @Test

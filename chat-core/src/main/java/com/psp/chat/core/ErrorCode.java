@@ -11,7 +11,7 @@ public enum ErrorCode {
     /** The text is empty, blank or longer than {@link Protocol#MAX_TEXT_LENGTH}. */
     INVALID_TEXT,
 
-    /** The image is empty or larger than the maximum size accepted by the server. */
+    /** The image is empty or larger than {@link Protocol#MAX_IMAGE_BYTES}. */
     INVALID_IMAGE,
 
     /** The client tried to send a private message to itself. */

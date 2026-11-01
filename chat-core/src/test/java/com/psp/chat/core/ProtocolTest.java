@@ -24,6 +24,14 @@ class ProtocolTest {
     }
 
     @Test
+    void validatesImages() {
+        assertFalse(Protocol.isValidImage(null));
+        assertFalse(Protocol.isValidImage(new byte[0]));
+        assertTrue(Protocol.isValidImage(new byte[Protocol.MAX_IMAGE_BYTES]));
+        assertFalse(Protocol.isValidImage(new byte[Protocol.MAX_IMAGE_BYTES + 1]));
+    }
+
+    @Test
     void validatesText() {
         assertFalse(Protocol.isValidText(null));
         assertFalse(Protocol.isValidText(""));
