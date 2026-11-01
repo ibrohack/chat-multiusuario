@@ -121,7 +121,30 @@ The statement requires manual synchronization with `synchronized`, so the code u
     - **Chose a shared module.** There is a single definition of the packets, and both sides need identical classes to deserialize them.
 11. **Error codes in the protocol** vs error sentences sent by the server.
     - **Chose codes.** The protocol stays language-neutral and the client words the errors in Spanish.
-12. **SLF4J + Logback.**
+12. **Two UIs in one client.** We compared four ways to choose a view:
+    - a chooser at start-up only;
+    - a live menu toggle only;
+    - a launch flag (two run configurations);
+    - a chooser **plus** a live switch.
+
+    **Chose the chooser plus the live switch.** The network layer and the observable `ChatSession` are shared, so switching a view only reloads one FXML and rebinds it. The connection and the whole history survive the switch (`ViewLoadingTest`).
+13. **Images inside packets** vs a separate transfer channel vs chunked transfers.
+    - **Chose a byte array inside the packet**, capped at 2 MiB.
+    - The same `ObjectChannel` and routing serve text and images.
+    - `reset()` after each write keeps sent images from piling up in the stream's memory.
+    - The server history stores a description (`[image foto.png, 34 KB]`), never the bytes.
+14. **SLF4J + Logback.**
     - Console output plus a rolling `logs/server.log`.
     - A separate `monitor` logger, so the statistics appear on the console only.
     - The MDC adds the username to every line written by a client thread.
+
+## Security: pending
+
+The current version sends packets in plain text and trusts the bytes it deserializes. The next session will cover:
+
+- **TLS 1.3 with JSSE.** `SSLServerSocket` / `SSLSocket`, plugged in at the only two places that create sockets: `ChatServer.createServerSocket` and `ServerConnection.openSocket`.
+  - A keytool script will generate a PKCS12 keystore.
+  - The client truststore will pin the server certificate.
+  - `ObjectChannel` works unchanged on an `SSLSocket`.
+- **Deserialization filter.** An `ObjectInputFilter` allow-list on every `ObjectInputStream`: only the `com.psp.chat.core` packets and the JDK types they use, plus size and depth limits. This closes the classic risk of deserializing untrusted input.
+- **Optional:** password login with PBKDF2 hashes.

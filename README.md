@@ -7,6 +7,10 @@ Multiuser chat built for the PSP course (2º DAM) challenge. It has two parts:
 
 Client and server talk over TCP sockets with `ObjectOutputStream` / `ObjectInputStream`. The client's interface is in Spanish, as in the course screenshot.
 
+| Classic UI ("Clásica") | Advanced UI ("Avanzada") |
+|---|---|
+| ![Classic UI](docs/screenshots/classic-ui.png) | ![Advanced UI](docs/screenshots/advanced-ui.png) |
+
 ## Requirements
 
 - JDK 21 or newer (tested on Windows 11 with Temurin JDK 25)
@@ -140,6 +144,22 @@ Messages you may see:
   ```
 - `logs/server.log` is the server's global log. It records connections, rejections, disconnections and every public and private message, with the thread and the user. Older files roll over daily or at 5 MB.
 - `logs/client-<timestamp>.log` holds one file per client run.
+
+## Delivery
+
+Build the zip from the release tag. It contains every tracked file of that version:
+
+```bash
+git archive --format=zip -o multiuser-chat.zip v1.2.0
+```
+
+| Folder in the zip | Folder asked by the statement |
+|---|---|
+| `chat-server/` | Servidor |
+| `chat-client/` | Cliente |
+| `chat-core/` | Shared by both: the protocol classes must be identical on both sides |
+
+We follow Java and Maven naming conventions, so the folders are not named "Servidor" and "Cliente". The parent `pom.xml` builds the three modules together.
 
 ## Troubleshooting
 
