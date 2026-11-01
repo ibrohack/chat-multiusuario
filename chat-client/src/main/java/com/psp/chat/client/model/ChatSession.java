@@ -56,6 +56,10 @@ public final class ChatSession implements ConnectionListener {
     private final ObservableList<String> onlineUsers = FXCollections.observableArrayList();
     private final ObservableList<ChatEntry> allEntries = FXCollections.observableArrayList();
     private final ObservableList<String> privateConversations = FXCollections.observableArrayList();
+    private final ObservableList<String> onlineUsersView = FXCollections.unmodifiableObservableList(onlineUsers);
+    private final ObservableList<ChatEntry> allEntriesView = FXCollections.unmodifiableObservableList(allEntries);
+    private final ObservableList<String> privateConversationsView =
+            FXCollections.unmodifiableObservableList(privateConversations);
     private final Map<String, ObservableList<ChatEntry>> conversations = new HashMap<>();
     private final Map<String, ObservableList<ChatEntry>> conversationViews = new HashMap<>();
     private Consumer<String> onError = message -> { };
@@ -109,19 +113,19 @@ public final class ChatSession implements ConnectionListener {
     /**
      * Returns the other connected users.
      *
-     * @return a read-only list kept in the server's order
+     * @return a read-only list kept in the server's order; the same instance for the whole session
      */
     public ObservableList<String> getOnlineUsers() {
-        return FXCollections.unmodifiableObservableList(onlineUsers);
+        return onlineUsersView;
     }
 
     /**
      * Returns every line of the session in arrival order, used by the classic view.
      *
-     * @return a read-only list
+     * @return a read-only list; the same instance for the whole session
      */
     public ObservableList<ChatEntry> getAllEntries() {
-        return FXCollections.unmodifiableObservableList(allEntries);
+        return allEntriesView;
     }
 
     /**
@@ -138,10 +142,10 @@ public final class ChatSession implements ConnectionListener {
     /**
      * Returns the users with a private conversation, in the order they started.
      *
-     * @return a read-only list of user names
+     * @return a read-only list of user names; the same instance for the whole session
      */
     public ObservableList<String> getPrivateConversations() {
-        return FXCollections.unmodifiableObservableList(privateConversations);
+        return privateConversationsView;
     }
 
     /**

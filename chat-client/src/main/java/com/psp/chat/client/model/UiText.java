@@ -56,6 +56,12 @@ public final class UiText {
     /** Window title without a session. */
     public static final String APP_TITLE = "Chat multiusuario";
 
+    /** Title of the public conversation tab. */
+    public static final String GENERAL_TAB = "General";
+
+    /** Prompt of the message field while the general tab is selected. */
+    public static final String GENERAL_PROMPT = "Mensaje para General";
+
     private UiText() {
         // Constants and formatting helpers only.
     }
@@ -90,6 +96,27 @@ public final class UiText {
      */
     public static String windowTitle(String username) {
         return APP_TITLE + " — " + username;
+    }
+
+    /**
+     * Builds the prompt of the message field while a private tab is selected.
+     *
+     * @param username name of the other user of the conversation
+     * @return the prompt text
+     */
+    public static String privatePrompt(String username) {
+        return "Mensaje privado para " + username;
+    }
+
+    /**
+     * Builds the title of a tab with unread messages.
+     *
+     * @param title  title of the tab
+     * @param unread number of unread lines
+     * @return the title followed by the count, for example {@code luis (2)}
+     */
+    public static String unreadTitle(String title, int unread) {
+        return title + " (" + unread + ")";
     }
 
     /**

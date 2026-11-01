@@ -33,3 +33,8 @@
 .section-title {
     -fx-font-weight: bold;
 }
+
+.tab.tab-offline .tab-label {
+    -fx-text-fill: #9e9e9e;
+    -fx-font-style: italic;
+}

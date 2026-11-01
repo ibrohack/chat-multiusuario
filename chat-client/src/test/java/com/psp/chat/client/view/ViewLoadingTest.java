@@ -1,14 +1,10 @@
 package com.psp.chat.client.view;
 
+import static com.psp.chat.client.view.FxTestSupport.onFxThread;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.psp.chat.client.model.ChatSession;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -28,26 +24,7 @@ class ViewLoadingTest {
 
     @BeforeAll
     static void startJavaFx() throws InterruptedException {
-        CountDownLatch started = new CountDownLatch(1);
-        try {
-            Platform.startup(started::countDown);
-        } catch (IllegalStateException alreadyRunning) {
-            started.countDown();
-        }
-        Platform.setImplicitExit(false);
-        assertTrue(started.await(10, TimeUnit.SECONDS));
-    }
-
-    static <T> T onFxThread(Callable<T> action) throws Exception {
-        CompletableFuture<T> result = new CompletableFuture<>();
-        Platform.runLater(() -> {
-            try {
-                result.complete(action.call());
-            } catch (Throwable e) {
-                result.completeExceptionally(e);
-            }
-        });
-        return result.get(10, TimeUnit.SECONDS);
+        FxTestSupport.start();
     }
 
     @ParameterizedTest
