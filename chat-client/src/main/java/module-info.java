@@ -6,8 +6,10 @@
  * conversation tabs.</p>
  */
 module com.psp.chat.client {
+    requires com.psp.chat.core;
     requires javafx.controls;
     requires javafx.fxml;
+    requires org.slf4j;
 
     opens com.psp.chat.client.view to javafx.fxml;
     exports com.psp.chat.client to javafx.graphics;
