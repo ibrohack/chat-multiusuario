@@ -4,6 +4,7 @@ import com.psp.chat.client.model.ChatEntry;
 import com.psp.chat.client.model.ChatSession;
 import com.psp.chat.client.model.ConnectionState;
 import com.psp.chat.client.model.UiText;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +24,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
+import javafx.stage.FileChooser;
 
 /**
  * Advanced view: the connected users on the left and one tab per conversation.
@@ -49,6 +51,9 @@ public final class AdvancedViewController implements ChatView {
 
     @FXML
     private ListView<ChatEntry> generalList;
+
+    @FXML
+    private Button attachButton;
 
     @FXML
     private TextField messageField;
@@ -110,6 +115,7 @@ public final class AdvancedViewController implements ChatView {
                 .or(selectedPeerOffline);
         messageField.disableProperty().bind(cannotSend);
         sendButton.disableProperty().bind(cannotSend);
+        attachButton.disableProperty().bind(cannotSend);
         onTabSelected(conversationTabs.getSelectionModel().getSelectedItem());
     }
 
@@ -126,6 +132,7 @@ public final class AdvancedViewController implements ChatView {
         onlineUsersLabel.textProperty().unbind();
         messageField.disableProperty().unbind();
         sendButton.disableProperty().unbind();
+        attachButton.disableProperty().unbind();
     }
 
     /**
@@ -156,6 +163,18 @@ public final class AdvancedViewController implements ChatView {
         }
         if (session.sendText(currentRecipient(), text)) {
             messageField.clear();
+        }
+    }
+
+    @FXML
+    private void onAttach() {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle(UiText.CHOOSE_IMAGE);
+        chooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter(UiText.IMAGE_FILTER, "*.png", "*.jpg", "*.jpeg", "*.gif"));
+        File file = chooser.showOpenDialog(attachButton.getScene().getWindow());
+        if (file != null) {
+            session.sendImage(currentRecipient(), file.toPath());
         }
     }
 

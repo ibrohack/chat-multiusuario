@@ -144,6 +144,20 @@ class AdvancedViewTest {
     }
 
     @Test
+    void attachButtonFollowsTheSendRule() throws Exception {
+        assertFalse(onFxThread(() -> root.lookup("#attachButton").isDisabled()));
+
+        onFxThread(() -> {
+            session.packetReceived(new TextMessage("luis", "ana", "hey", TIME));
+            tabs().getSelectionModel().select(tab("luis"));
+            session.packetReceived(new UserEvent(UserEventType.LEFT, "luis", List.of("ana", "eva")));
+            return null;
+        });
+
+        assertTrue(onFxThread(() -> root.lookup("#attachButton").isDisabled()));
+    }
+
+    @Test
     void openingAConversationSelectsItsTab() throws Exception {
         String selected = onFxThread(() -> {
             controller.openConversation("eva");

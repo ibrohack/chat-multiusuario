@@ -56,6 +56,15 @@ public final class UiText {
     /** Window title without a session. */
     public static final String APP_TITLE = "Chat multiusuario";
 
+    /** Shown instead of an image that cannot be decoded. */
+    public static final String INVALID_IMAGE_PLACEHOLDER = "[imagen no válida]";
+
+    /** Title of the file chooser used to attach an image. */
+    public static final String CHOOSE_IMAGE = "Elige una imagen";
+
+    /** Name of the image file filter of the file chooser. */
+    public static final String IMAGE_FILTER = "Imágenes";
+
     /** Title of the public conversation tab. */
     public static final String GENERAL_TAB = "General";
 
