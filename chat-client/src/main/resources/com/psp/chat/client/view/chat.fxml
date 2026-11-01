@@ -13,7 +13,7 @@
 <?import javafx.scene.text.Font?>
 
 
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="360.0" minWidth="480.0" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.psp.ChatController">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="360.0" minWidth="480.0" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.psp.chat.client.view.ChatController">
    <top>
       <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
@@ -22,7 +22,7 @@
                   <Insets left="20.0" top="14.0" />
                </HBox.margin>
             </Label>
-            <TextField fx:id="ip_tf" prefHeight="25.0" prefWidth="70.0" promptText="127.0.0.1">
+            <TextField fx:id="ipField" prefHeight="25.0" prefWidth="70.0" promptText="127.0.0.1">
                <HBox.margin>
                   <Insets left="5.0" top="10.0" />
                </HBox.margin>
@@ -32,7 +32,7 @@
                   <Insets left="10.0" top="14.0" />
                </HBox.margin>
             </Label>
-            <TextField fx:id="puerto_tf" layoutX="38.0" layoutY="20.0" prefHeight="25.0" prefWidth="47.0" promptText="5000">
+            <TextField fx:id="portField" layoutX="38.0" layoutY="20.0" prefHeight="25.0" prefWidth="47.0" promptText="5000">
                <HBox.margin>
                   <Insets left="5.0" top="10.0" />
                </HBox.margin>
@@ -42,23 +42,23 @@
                   <Insets left="10.0" top="14.0" />
                </HBox.margin>
             </Label>
-            <TextField fx:id="usuario_tf" layoutX="156.0" layoutY="20.0" prefHeight="25.0" prefWidth="47.0" promptText="5000">
+            <TextField fx:id="usernameField" layoutX="156.0" layoutY="20.0" prefHeight="25.0" prefWidth="47.0" promptText="5000">
                <HBox.margin>
                   <Insets left="5.0" top="10.0" />
                </HBox.margin>
             </TextField>
             <Region HBox.hgrow="ALWAYS" />
-            <Button fx:id="conectar_button" mnemonicParsing="false" text="Conectar">
+            <Button fx:id="connectButton" mnemonicParsing="false" text="Conectar">
                <HBox.margin>
                   <Insets left="10.0" top="10.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="desconectar_button" disable="true" layoutX="325.0" layoutY="20.0" mnemonicParsing="false" text="Desconectar">
+            <Button fx:id="disconnectButton" disable="true" layoutX="325.0" layoutY="20.0" mnemonicParsing="false" text="Desconectar">
                <HBox.margin>
                   <Insets left="10.0" top="10.0" />
                </HBox.margin>
             </Button>
-            <Label fx:id="estado_lbl" text="No conectado">
+            <Label fx:id="statusLabel" text="No conectado">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
@@ -72,7 +72,7 @@
    <bottom>
       <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <CheckBox fx:id="privado_checkbox" mnemonicParsing="false" text="Privado">
+            <CheckBox fx:id="privateCheckBox" mnemonicParsing="false" text="Privado">
                <HBox.margin>
                   <Insets left="20.0" top="10.0" />
                </HBox.margin>
@@ -82,17 +82,17 @@
                   <Insets left="10.0" top="10.0" />
                </HBox.margin>
             </Label>
-            <TextField fx:id="para_tf">
+            <TextField fx:id="recipientField">
                <HBox.margin>
                   <Insets left="5.0" top="5.0" />
                </HBox.margin>
             </TextField>
-            <TextField fx:id="mensaje_tf" prefHeight="25.0" HBox.hgrow="ALWAYS">
+            <TextField fx:id="messageField" prefHeight="25.0" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets left="10.0" top="5.0" />
                </HBox.margin>
             </TextField>
-            <Button fx:id="enviar_button" mnemonicParsing="false" text="Enviar">
+            <Button fx:id="sendButton" mnemonicParsing="false" text="Enviar">
                <HBox.margin>
                   <Insets left="10.0" right="20.0" top="5.0" />
                </HBox.margin>
