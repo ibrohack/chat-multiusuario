@@ -1,0 +1,141 @@
+package com.psp.chat.client.model;
+
+/**
+ * User-visible texts of the client, in Spanish, kept in one place.
+ */
+public final class UiText {
+
+    /** Shown when the port field is not a valid port. */
+    public static final String INVALID_PORT = "El puerto debe ser un número entre 1 y 65535.";
+
+    /** Shown when the username does not follow the protocol rules. */
+    public static final String INVALID_USERNAME = "Nombre no válido: usa de 3 a 16 letras, números o _.";
+
+    /** Notice added when the user disconnects. */
+    public static final String YOU_DISCONNECTED = "Te has desconectado";
+
+    /** Shown when the server announces its shutdown. */
+    public static final String SERVER_CLOSED = "El servidor se ha cerrado.";
+
+    /** Shown when the connection fails unexpectedly. */
+    public static final String CONNECTION_LOST = "Se ha perdido la conexión con el servidor.";
+
+    /** Shown when the server rejects the login because it is full. */
+    public static final String SERVER_FULL = "El servidor está lleno. Inténtalo más tarde.";
+
+    /** Shown when a message is empty or too long. */
+    public static final String INVALID_TEXT = "El mensaje está vacío o supera 1000 caracteres.";
+
+    /** Shown when the user tries to send a private message to themselves. */
+    public static final String PRIVATE_TO_SELF = "No puedes enviarte mensajes privados a ti mismo.";
+
+    /** Shown when the user tries to send without a session. */
+    public static final String NOT_CONNECTED = "No estás conectado.";
+
+    /** Shown when the server reports a repeated login. */
+    public static final String ALREADY_LOGGED_IN = "Ya has iniciado sesión.";
+
+    /** Shown when an image is empty or too large. */
+    public static final String INVALID_IMAGE = "La imagen está vacía o supera el máximo de 2 MB.";
+
+    /** Shown by the classic view when a private message has no recipient. */
+    public static final String RECIPIENT_REQUIRED = "Indica el destinatario en «Para».";
+
+    private UiText() {
+        // Constants and formatting helpers only.
+    }
+
+    /**
+     * Builds the notice shown after logging in.
+     *
+     * @param host     server host
+     * @param port     server port
+     * @param username name the user logged in with
+     * @return the notice text
+     */
+    public static String connectedAs(String host, int port, String username) {
+        return "Conectado a " + host + ":" + port + " como " + username;
+    }
+
+    /**
+     * Builds the notice shown when a user joins.
+     *
+     * @param username name of the user
+     * @return the notice text
+     */
+    public static String joined(String username) {
+        return username + " se ha conectado";
+    }
+
+    /**
+     * Builds the notice shown when a user leaves.
+     *
+     * @param username name of the user
+     * @return the notice text
+     */
+    public static String left(String username) {
+        return username + " se ha desconectado";
+    }
+
+    /**
+     * Builds the error shown when the username is taken.
+     *
+     * @param username the requested name
+     * @return the error text
+     */
+    public static String usernameTaken(String username) {
+        return "El nombre «" + username + "» ya está en uso.";
+    }
+
+    /**
+     * Builds the error shown when the server refuses the connection.
+     *
+     * @param host server host
+     * @param port server port
+     * @return the error text
+     */
+    public static String cannotConnect(String host, int port) {
+        return "No se pudo conectar con " + host + ":" + port + ". ¿Está el servidor arrancado?";
+    }
+
+    /**
+     * Builds the error shown when the server does not answer in time.
+     *
+     * @param host server host
+     * @param port server port
+     * @return the error text
+     */
+    public static String noResponse(String host, int port) {
+        return "El servidor " + host + ":" + port + " no responde.";
+    }
+
+    /**
+     * Builds the error shown when the host name cannot be resolved.
+     *
+     * @param host server host
+     * @return the error text
+     */
+    public static String unknownHost(String host) {
+        return "No se encuentra el host " + host + ".";
+    }
+
+    /**
+     * Builds the error shown for any other communication problem.
+     *
+     * @param message technical detail of the problem
+     * @return the error text
+     */
+    public static String communicationError(String message) {
+        return "Error de comunicación: " + message;
+    }
+
+    /**
+     * Builds the error shown when a private recipient is not connected.
+     *
+     * @param username name of the recipient
+     * @return the error text
+     */
+    public static String userNotConnected(String username) {
+        return "El usuario " + username + " no está conectado.";
+    }
+}
