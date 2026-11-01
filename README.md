@@ -143,14 +143,14 @@ Messages you may see:
   [MONITOR] Online users: 2/10 | Uptime: 00:05:10 | Last message: [12:01:22] ana -> all: hola
   ```
 - `logs/server.log` is the server's global log. It records connections, rejections, disconnections and every public and private message, with the thread and the user. Older files roll over daily or at 5 MB.
-- `logs/client-<timestamp>.log` holds one file per client run.
+- `chat-client/logs/client-<timestamp>.log` holds one file per client run. `javafx:run` starts the client from its module folder.
 
 ## Delivery
 
 Build the zip from the release tag. It contains every tracked file of that version:
 
 ```bash
-git archive --format=zip -o multiuser-chat.zip v1.2.0
+git archive --format=zip -o multiuser-chat.zip v1.2.1
 ```
 
 | Folder in the zip | Folder asked by the statement |
