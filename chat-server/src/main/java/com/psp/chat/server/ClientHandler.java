@@ -8,13 +8,18 @@ import com.psp.chat.core.LoginRejected;
 import com.psp.chat.core.LoginRequest;
 import com.psp.chat.core.LogoutRequest;
 import com.psp.chat.core.ObjectChannel;
+import com.psp.chat.core.Protocol;
 import com.psp.chat.core.RejectionReason;
 import com.psp.chat.core.ServerPacket;
+import com.psp.chat.core.TextMessage;
 import com.psp.chat.core.TextRequest;
 import com.psp.chat.core.UserEvent;
 import com.psp.chat.core.UserEventType;
 import java.io.IOException;
 import java.net.Socket;
+import java.time.Instant;
+import java.time.LocalTime;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -124,9 +129,43 @@ final class ClientHandler implements Runnable, ConnectedClient {
                     return "logout";
                 }
                 case LoginRequest repeated -> send(new ErrorNotice(ErrorCode.ALREADY_LOGGED_IN, null));
-                case TextRequest request -> LOG.warn("Text messages are not supported yet: {}", request);
+                case TextRequest request -> deliverText(request);
             }
         }
+    }
+
+    /**
+     * Validates a text request and delivers it: to everyone if it is public, or to
+     * the recipient plus an echo to the sender if it is private.
+     */
+    private void deliverText(TextRequest request) {
+        String sender = getUsername();
+        if (!Protocol.isValidText(request.text())) {
+            send(new ErrorNotice(ErrorCode.INVALID_TEXT, null));
+            return;
+        }
+        if (request.recipient() == null) {
+            room.addToHistory(new MessageRecord(LocalTime.now(), sender, null, request.text()));
+            LOG.info("[PUBLIC] {}: {}", sender, request.text());
+            room.broadcast(new TextMessage(sender, null, request.text(), Instant.now()));
+            return;
+        }
+        if (request.recipient().equalsIgnoreCase(sender)) {
+            send(new ErrorNotice(ErrorCode.PRIVATE_TO_SELF, null));
+            return;
+        }
+        Optional<ConnectedClient> target = room.findClient(request.recipient());
+        if (target.isEmpty()) {
+            send(new ErrorNotice(ErrorCode.USER_NOT_CONNECTED, request.recipient()));
+            return;
+        }
+        ConnectedClient recipient = target.get();
+        String recipientName = recipient.getUsername();
+        TextMessage message = new TextMessage(sender, recipientName, request.text(), Instant.now());
+        room.addToHistory(new MessageRecord(LocalTime.now(), sender, recipientName, request.text()));
+        LOG.info("[PRIVATE] {} -> {}: {}", sender, recipientName, request.text());
+        recipient.send(message);
+        send(message);
     }
 
     @Override
