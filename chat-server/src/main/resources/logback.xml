@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- Console output uses the console's own charset so accents render on Windows. -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <charset>${stdout.encoding:-UTF-8}</charset>
+            <pattern>%d{HH:mm:ss} %-5level [%thread] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="MONITOR" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <charset>${stdout.encoding:-UTF-8}</charset>
+            <pattern>%d{HH:mm:ss} [MONITOR] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Global log of the server: connections, disconnections and every message. -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/server.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/server.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>5MB</maxFileSize>
+            <maxHistory>14</maxHistory>
+            <totalSizeCap>50MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{user:-}] %logger{0} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="monitor" level="INFO" additivity="false">
+        <appender-ref ref="MONITOR"/>
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>
