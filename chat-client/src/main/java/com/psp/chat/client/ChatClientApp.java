@@ -12,6 +12,13 @@ import javafx.stage.Stage;
  */
 public final class ChatClientApp extends Application {
 
+    /**
+     * Creates the application; JavaFX instantiates it when the client starts.
+     */
+    public ChatClientApp() {
+        // Nothing to initialize: the window is built in start(Stage).
+    }
+
     @Override
     public void start(Stage stage) throws IOException {
         Parent root = FXMLLoader.load(ChatClientApp.class.getResource("view/chat.fxml"));

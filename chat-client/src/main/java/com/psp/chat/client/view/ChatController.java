@@ -40,4 +40,11 @@ public class ChatController {
 
     @FXML
     private TextField usernameField;
+
+    /**
+     * Creates the controller; {@code FXMLLoader} instantiates it when loading the view.
+     */
+    public ChatController() {
+        // Fields are injected by FXMLLoader.
+    }
 }

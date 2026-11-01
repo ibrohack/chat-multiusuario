@@ -104,6 +104,9 @@
                     <configuration>
                         <doclint>all</doclint>
                         <failOnWarnings>true</failOnWarnings>
+                        <additionalOptions>
+                            <additionalOption>--show-packages=all</additionalOption>
+                        </additionalOptions>
                     </configuration>
                 </plugin>
                 <plugin>
