@@ -4,6 +4,8 @@ import com.psp.chat.core.ServerShutdown;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +27,7 @@ public final class ChatServer {
     private final ServerConfig config;
     private final ChatRoom room;
     private ServerSocket serverSocket;
+    private MonitorThread monitor;
     private boolean stopped;
 
     /**
@@ -51,6 +54,8 @@ public final class ChatServer {
         LOG.info("Server listening on port {} (max {} clients)", serverSocket.getLocalPort(), config.maxClients());
         Thread acceptor = new Thread(this::acceptClients, "acceptor");
         acceptor.start();
+        monitor = new MonitorThread(room, Instant.now(), Duration.ofSeconds(config.monitorIntervalSeconds()));
+        monitor.start();
     }
 
     /**
@@ -81,16 +86,19 @@ public final class ChatServer {
      */
     public void stop() {
         ServerSocket socketToClose;
+        MonitorThread monitorToStop;
         synchronized (this) {
             if (stopped) {
                 return;
             }
             stopped = true;
             socketToClose = serverSocket;
+            monitorToStop = monitor;
         }
         if (socketToClose == null) {
             return;
         }
+        monitorToStop.interrupt();
         try {
             socketToClose.close();
         } catch (IOException e) {
