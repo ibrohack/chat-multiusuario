@@ -41,6 +41,21 @@ public final class UiText {
     /** Shown by the classic view when a private message has no recipient. */
     public static final String RECIPIENT_REQUIRED = "Indica el destinatario en «Para».";
 
+    /** Tag of public messages in the classic view. */
+    public static final String PUBLIC_TAG = "[PÚBLICO]";
+
+    /** Tag of private messages in the classic view. */
+    public static final String PRIVATE_TAG = "[PRIVADO]";
+
+    /** Status label text without a session. */
+    public static final String STATUS_DISCONNECTED = "No conectado";
+
+    /** Status label text while logging in. */
+    public static final String STATUS_CONNECTING = "Conectando…";
+
+    /** Window title without a session. */
+    public static final String APP_TITLE = "Chat multiusuario";
+
     private UiText() {
         // Constants and formatting helpers only.
     }
@@ -55,6 +70,26 @@ public final class UiText {
      */
     public static String connectedAs(String host, int port, String username) {
         return "Conectado a " + host + ":" + port + " como " + username;
+    }
+
+    /**
+     * Builds the status label text of an open session.
+     *
+     * @param username name the user is logged in with
+     * @return the status text
+     */
+    public static String connectedStatus(String username) {
+        return "Conectado como " + username;
+    }
+
+    /**
+     * Builds the window title of an open session.
+     *
+     * @param username name the user is logged in with
+     * @return the window title
+     */
+    public static String windowTitle(String username) {
+        return APP_TITLE + " — " + username;
     }
 
     /**

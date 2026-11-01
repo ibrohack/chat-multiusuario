@@ -191,25 +191,27 @@ public final class ChatSession implements ConnectionListener {
     }
 
     /**
-     * Sends a text message after checking it.
+     * Sends a text message after checking it; problems are reported through the error handler.
      *
      * @param recipient name of the private recipient, or {@code null} for the general chat
      * @param text      message text
+     * @return {@code true} if the message was queued for sending
      */
-    public void sendText(String recipient, String text) {
+    public boolean sendText(String recipient, String text) {
         if (!Protocol.isValidText(text)) {
             onError.accept(UiText.INVALID_TEXT);
-            return;
+            return false;
         }
         if (recipient != null && recipient.equalsIgnoreCase(getUsername())) {
             onError.accept(UiText.PRIVATE_TO_SELF);
-            return;
+            return false;
         }
         if (getState() != ConnectionState.CONNECTED || connection == null) {
             onError.accept(UiText.NOT_CONNECTED);
-            return;
+            return false;
         }
         connection.send(new TextRequest(recipient, text));
+        return true;
     }
 
     /**

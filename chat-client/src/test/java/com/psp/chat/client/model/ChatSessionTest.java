@@ -1,6 +1,7 @@
 package com.psp.chat.client.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.psp.chat.client.network.LoginRejectedException;
@@ -143,6 +144,12 @@ class ChatSessionTest {
                 "El mensaje está vacío o supera 1000 caracteres.",
                 "No estás conectado.",
                 "No puedes enviarte mensajes privados a ti mismo."), errors);
+    }
+
+    @Test
+    void sendTextReportsThatNothingWasSent() {
+        assertFalse(session.sendText(null, "   "));
+        assertFalse(session.sendText(null, "hola"));
     }
 
     @Test

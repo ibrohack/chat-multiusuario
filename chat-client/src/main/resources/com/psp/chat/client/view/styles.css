@@ -1,0 +1,22 @@
+.status-label {
+    -fx-font-weight: bold;
+}
+
+.list-cell.entry-private {
+    -fx-text-fill: #6a1b9a;
+    -fx-background-color: #f3e5f5;
+}
+
+.list-cell.entry-private:selected {
+    -fx-background-color: #ce93d8;
+}
+
+.list-cell.entry-system {
+    -fx-text-fill: #757575;
+    -fx-font-style: italic;
+}
+
+.list-cell.entry-error {
+    -fx-text-fill: #c62828;
+    -fx-font-weight: bold;
+}
