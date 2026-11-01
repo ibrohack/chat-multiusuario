@@ -33,7 +33,14 @@ replay_pid*
 *.jmod
 
 # ===== Docs =====
-docs/
+# Course material stays local; project documentation is versioned.
+docs/*.pdf
+docs/*.png
+# Implementation plans and agent artifacts are never committed.
+docs/superpowers/
+
+# ===== Logs =====
+logs/
 
 # ===== IntelliJ IDEA =====
 .idea/
