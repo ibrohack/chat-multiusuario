@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" spacing="18.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.psp.chat.client.view.SelectorController">
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+   <children>
+      <Label styleClass="selector-title" text="¿Qué interfaz quieres usar?" />
+      <HBox alignment="CENTER" spacing="16.0">
+         <children>
+            <Button fx:id="classicButton" mnemonicParsing="false" onAction="#onClassicSelected"
+                    prefHeight="110.0" prefWidth="190.0" styleClass="selector-button"
+                    text="Clásica&#10;(rúbrica)" textAlignment="CENTER" wrapText="true" />
+            <Button fx:id="advancedButton" mnemonicParsing="false" onAction="#onAdvancedSelected"
+                    prefHeight="110.0" prefWidth="190.0" styleClass="selector-button"
+                    text="Avanzada&#10;(usuarios y pestañas)" textAlignment="CENTER" wrapText="true" />
+         </children>
+      </HBox>
+   </children>
+</VBox>

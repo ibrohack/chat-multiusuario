@@ -2,8 +2,12 @@ package com.psp.chat.client;
 
 import com.psp.chat.client.model.ChatSession;
 import com.psp.chat.client.model.ConnectionState;
+import com.psp.chat.client.model.UiText;
 import com.psp.chat.client.view.MainController;
+import com.psp.chat.client.view.SelectorController;
+import com.psp.chat.client.view.ViewType;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -15,10 +19,14 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Entry point of the JavaFX chat client.
+ *
+ * <p>Shows the start-up selector first; the chosen view then opens in the main
+ * window, where the "Vista" menu switches views without losing the session.</p>
  */
 public final class ChatClientApp extends Application {
 
     private static final Logger LOG = LoggerFactory.getLogger(ChatClientApp.class);
+    private static final String STYLESHEET = "view/styles.css";
 
     private ChatSession session;
 
@@ -26,19 +34,18 @@ public final class ChatClientApp extends Application {
      * Creates the application; JavaFX instantiates it when the client starts.
      */
     public ChatClientApp() {
-        // The window is built in start(Stage).
+        // The windows are built in start(Stage).
     }
 
     @Override
     public void start(Stage stage) throws IOException {
         session = new ChatSession(Platform::runLater);
-        FXMLLoader loader = new FXMLLoader(ChatClientApp.class.getResource("view/main-view.fxml"));
-        Parent root = loader.load();
-        Scene scene = new Scene(root, 800, 560);
-        scene.getStylesheets().add(ChatClientApp.class.getResource("view/styles.css").toExternalForm());
-        stage.setScene(scene);
-        MainController controller = loader.getController();
-        controller.configure(session, stage);
+        FXMLLoader loader = new FXMLLoader(ChatClientApp.class.getResource("view/selector-view.fxml"));
+        Parent selector = loader.load();
+        SelectorController controller = loader.getController();
+        controller.setOnSelect(view -> showMainWindow(stage, view));
+        stage.setTitle(UiText.APP_TITLE);
+        stage.setScene(styledScene(selector, 460, 240));
         stage.show();
         LOG.info("Client started");
     }
@@ -58,5 +65,26 @@ public final class ChatClientApp extends Application {
      */
     public static void main(String[] args) {
         launch(args);
+    }
+
+    private void showMainWindow(Stage stage, ViewType view) {
+        FXMLLoader loader = new FXMLLoader(ChatClientApp.class.getResource("view/main-view.fxml"));
+        Parent root;
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            throw new UncheckedIOException("Cannot load the main window", e);
+        }
+        stage.setScene(styledScene(root, 800, 560));
+        MainController controller = loader.getController();
+        controller.configure(session, stage, view);
+        stage.centerOnScreen();
+        LOG.info("Opened the {} view", view);
+    }
+
+    private static Scene styledScene(Parent root, double width, double height) {
+        Scene scene = new Scene(root, width, height);
+        scene.getStylesheets().add(ChatClientApp.class.getResource(STYLESHEET).toExternalForm());
+        return scene;
     }
 }

@@ -93,6 +93,16 @@ public final class UiText {
     }
 
     /**
+     * Builds the title of the connected users list.
+     *
+     * @param count number of other connected users
+     * @return the list title
+     */
+    public static String onlineUsers(int count) {
+        return "Conectados (" + count + ")";
+    }
+
+    /**
      * Builds the notice shown when a user joins.
      *
      * @param username name of the user

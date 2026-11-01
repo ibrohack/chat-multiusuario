@@ -14,6 +14,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -24,7 +25,11 @@ import javafx.stage.Stage;
  */
 public final class MainController {
 
-    private static final String CLASSIC_VIEW = "classic-view.fxml";
+    @FXML
+    private RadioMenuItem classicViewItem;
+
+    @FXML
+    private RadioMenuItem advancedViewItem;
 
     @FXML
     private TextField ipField;
@@ -58,12 +63,13 @@ public final class MainController {
     }
 
     /**
-     * Binds the window to the session and shows the classic view.
+     * Binds the window to the session and shows the first view.
      *
-     * @param session session shared by every view
-     * @param stage   window whose title shows the logged-in user
+     * @param session     session shared by every view
+     * @param stage       window whose title shows the logged-in user
+     * @param initialView view chosen in the start-up selector
      */
-    public void configure(ChatSession session, Stage stage) {
+    public void configure(ChatSession session, Stage stage, ViewType initialView) {
         this.session = session;
         BooleanBinding disconnected = session.stateProperty().isEqualTo(ConnectionState.DISCONNECTED);
         BooleanBinding connected = session.stateProperty().isEqualTo(ConnectionState.CONNECTED);
@@ -78,7 +84,39 @@ public final class MainController {
                 this::windowTitle, session.stateProperty(), session.usernameProperty()));
         session.usernameProperty().addListener((property, oldName, newName) -> usernameField.setText(newName));
         session.setOnError(text -> new Alert(Alert.AlertType.ERROR, text).show());
-        showView(CLASSIC_VIEW);
+        showView(initialView);
+    }
+
+    /**
+     * Replaces the current view, keeping the session and its history.
+     *
+     * @param view view to show
+     */
+    public void showView(ViewType view) {
+        if (currentView != null) {
+            currentView.detach();
+        }
+        FXMLLoader loader = new FXMLLoader(MainController.class.getResource(view.getFxml()));
+        Parent root;
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            throw new UncheckedIOException("Cannot load the view " + view.getFxml(), e);
+        }
+        currentView = loader.getController();
+        currentView.attach(session);
+        contentPane.setCenter(root);
+        (view == ViewType.CLASSIC ? classicViewItem : advancedViewItem).setSelected(true);
+    }
+
+    @FXML
+    private void onClassicView() {
+        showView(ViewType.CLASSIC);
+    }
+
+    @FXML
+    private void onAdvancedView() {
+        showView(ViewType.ADVANCED);
     }
 
     @FXML
@@ -96,22 +134,6 @@ public final class MainController {
     @FXML
     private void onDisconnect() {
         session.disconnect();
-    }
-
-    private void showView(String fxml) {
-        if (currentView != null) {
-            currentView.detach();
-        }
-        FXMLLoader loader = new FXMLLoader(MainController.class.getResource(fxml));
-        Parent root;
-        try {
-            root = loader.load();
-        } catch (IOException e) {
-            throw new UncheckedIOException("Cannot load the view " + fxml, e);
-        }
-        currentView = loader.getController();
-        currentView.attach(session);
-        contentPane.setCenter(root);
     }
 
     private String statusText() {
