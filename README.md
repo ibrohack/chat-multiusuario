@@ -110,6 +110,17 @@ The advanced view keeps the same connection bar. It replaces the «Privado» che
   - sending is disabled while that tab is selected;
   - everything is re-enabled if the user comes back.
 
+## Sharing images
+
+**Sending (Avanzada only).** Press **Imagen…** next to the message field and choose a `png`, `jpg`, `jpeg` or `gif` file of at most **2 MB**. The image goes to the conversation of the selected tab: to everyone from **General**, or privately from a user's tab.
+
+**Viewing (both views).** Images appear as a thumbnail under a header line, for example `[12:03] [PÚBLICO] luis: foto.png`.
+
+- **Click a thumbnail** to open the image at full size in its own window.
+- The classic view has no button to send images, but it shows every image it receives.
+
+If a file is empty or larger than 2 MB, the client refuses it with `La imagen está vacía o supera el máximo de 2 MB.` The server checks the size too.
+
 Messages you may see:
 
 | Message | Meaning |
