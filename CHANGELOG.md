@@ -2,6 +2,14 @@
 
 Notable changes per release, grouped by [Conventional Commits](https://www.conventionalcommits.org/) type.
 
+## 1.2.1 — 2026-11-01
+
+### Bug fixes
+- **client:** announce private conversations again after reconnecting
+
+### Documentation
+- correct the client log location
+
 ## 1.2.0 — 2026-11-01
 
 Image sharing and the delivery documentation.
