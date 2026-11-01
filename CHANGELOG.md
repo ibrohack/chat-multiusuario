@@ -2,6 +2,17 @@
 
 Notable changes per release, grouped by [Conventional Commits](https://www.conventionalcommits.org/) type.
 
+## 1.1.0 — 2026-11-01
+
+Advanced user interface and live view switching.
+
+### Features
+- **client:** add view selector and live view switching
+- **advanced-ui:** split general and private chats into tabs
+
+### Documentation
+- explain the advanced UI
+
 ## 1.0.0 — 2026-11-01
 
 Rubric-complete chat: console server and JavaFX client with the classic view.
