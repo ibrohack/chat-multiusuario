@@ -39,6 +39,7 @@ public final class ChatEntryCell extends ListCell<ChatEntry> {
     public ChatEntryCell(boolean showScope) {
         this.showScope = showScope;
         setWrapText(true);
+		setPrefWidth(0);
     }
 
     @Override
