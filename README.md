@@ -85,7 +85,7 @@ The classic view reproduces the window of the course screenshot. It has the conn
    - An empty IP means `127.0.0.1`; an empty port means `5000`.
    - The name needs 3 to 16 letters, digits or `_`.
    - While connected, the status label shows `Conectado como <name>` and the window title shows your name.
-2. **Public message.** Type in the bottom field and press **Enviar** (or Enter). Everyone receives it:
+2. **Public message.** Type in the bottom box and press **Enviar** (or Enter). Press Shift+Enter to start a new line. Everyone receives it:
    ```
    [12:01] [PÚBLICO] ana: hola
    ```
@@ -113,6 +113,7 @@ The advanced view keeps the same connection bar. It replaces the «Privado» che
   - the tab turns grey and italic;
   - sending is disabled while that tab is selected;
   - everything is re-enabled if the user comes back.
+  - **Writing.** The message box works as in the classic view: Enter sends and Shift+Enter starts a new line.
 
 ## Sharing images
 
