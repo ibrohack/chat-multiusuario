@@ -23,7 +23,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.FileChooser;
@@ -59,7 +59,7 @@ public final class AdvancedViewController implements ChatView {
     private Button attachButton;
 
     @FXML
-    private TextField messageField;
+    private TextArea messageField;
 
     @FXML
     private Button sendButton;
@@ -133,6 +133,7 @@ public final class AdvancedViewController implements ChatView {
         messageField.disableProperty().bind(cannotSend);
         sendButton.disableProperty().bind(cannotSend);
         attachButton.disableProperty().bind(cannotSend);
+		SendKeyHandler.install(messageField, this::onSend);
         onTabSelected(conversationTabs.getSelectionModel().getSelectedItem());
     }
 

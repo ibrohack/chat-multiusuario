@@ -6,7 +6,7 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -46,7 +46,7 @@
          <children>
             <Button fx:id="attachButton" mnemonicParsing="false" onAction="#onAttach" text="Imagen…" />
             <Button fx:id="emojiButton" mnemonicParsing="false" onAction="#onEmoji" text="😀" />
-            <TextField fx:id="messageField" onAction="#onSend" promptText="Mensaje para General" HBox.hgrow="ALWAYS" />
+            <TextArea fx:id="messageField" prefRowCount="3" promptText="Mensaje para General" wrapText="true" HBox.hgrow="ALWAYS" />
             <Button fx:id="sendButton" mnemonicParsing="false" onAction="#onSend" text="Enviar" />
          </children>
       </HBox>

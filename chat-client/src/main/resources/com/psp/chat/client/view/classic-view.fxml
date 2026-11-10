@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 
@@ -23,7 +24,7 @@
             <CheckBox fx:id="privateCheckBox" mnemonicParsing="false" text="Privado" />
             <Label text="Para:" />
             <TextField fx:id="recipientField" prefWidth="110.0" promptText="admin" />
-            <TextField fx:id="messageField" onAction="#onSend" HBox.hgrow="ALWAYS" />
+            <TextArea fx:id="messageField" prefRowCount="3" wrapText="true" HBox.hgrow="ALWAYS" />
             <Button fx:id="sendButton" mnemonicParsing="false" onAction="#onSend" text="Enviar" />
          </children>
       </HBox>

@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
 
 /**
  * Classic view: one message list for every conversation and the «Privado» / «Para»
@@ -29,7 +30,7 @@ public final class ClassicViewController implements ChatView {
     private TextField recipientField;
 
     @FXML
-    private TextField messageField;
+    private TextArea messageField;
 
     @FXML
     private Button sendButton;
@@ -56,6 +57,7 @@ public final class ClassicViewController implements ChatView {
         recipientField.disableProperty().bind(disconnected.or(privateCheckBox.selectedProperty().not()));
         messageField.disableProperty().bind(disconnected);
         sendButton.disableProperty().bind(disconnected);
+		SendKeyHandler.install(messageField, this::onSend);
     }
 
     @Override
