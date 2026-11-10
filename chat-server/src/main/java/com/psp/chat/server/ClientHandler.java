@@ -151,13 +151,22 @@ final class ClientHandler implements Runnable, ConnectedClient {
         String text = request.text();
         route(request.recipient(), text,
                 recipientName -> new TextMessage(sender, recipientName, text, Instant.now()),
-                recipientName -> {
-                    if (recipientName == null) {
-                        LOG.info("[PUBLIC] {}: {}", sender, text);
-                    } else {
-                        LOG.info("[PRIVATE] {} -> {}: {}", sender, recipientName, text);
-                    }
-                });
+                recipientName -> LOG.info(logLine(sender, recipientName, text)));
+    }
+
+    /**
+     * Formats the log entry of a text message, always on one line.
+     *
+     * @param sender    name of the sender
+     * @param recipient name of the private recipient, or {@code null} for a public message
+     * @param text      message text
+     * @return a line like {@code [PUBLIC] ana: hola} or {@code [PRIVATE] ana -> luis: hola}
+     */
+    static String logLine(String sender, String recipient, String text) {
+        String line = MessageRecord.singleLine(text);
+        return recipient == null
+                ? "[PUBLIC] " + sender + ": " + line
+                : "[PRIVATE] " + sender + " -> " + recipient + ": " + line;
     }
 
     /**

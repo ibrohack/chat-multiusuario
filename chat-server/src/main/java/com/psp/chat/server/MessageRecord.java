@@ -36,6 +36,17 @@ public record MessageRecord(LocalTime time, String sender, String recipient, Str
     @Override
     public String toString() {
         String target = recipient == null ? "all" : recipient + " (private)";
-        return "[" + TIME_FORMAT.format(time) + "] " + sender + " -> " + target + ": " + content;
+        return "[" + TIME_FORMAT.format(time) + "] " + sender + " -> " + target + ": " + singleLine(content);
+    }
+
+    /**
+     * Writes the line breaks of a text as the visible sequences {@code \r} and {@code \n},
+     * so that a multi-line message stays on one line of the log.
+     *
+     * @param text text to convert
+     * @return the text on a single line
+     */
+    static String singleLine(String text) {
+        return text.replace("\r", "\\r").replace("\n", "\\n");
     }
 }
