@@ -45,6 +45,7 @@
          </padding>
          <children>
             <Button fx:id="attachButton" mnemonicParsing="false" onAction="#onAttach" text="Imagen…" />
+            <Button fx:id="emojiButton" mnemonicParsing="false" onAction="#onEmoji" text="😀" />
             <TextField fx:id="messageField" onAction="#onSend" promptText="Mensaje para General" HBox.hgrow="ALWAYS" />
             <Button fx:id="sendButton" mnemonicParsing="false" onAction="#onSend" text="Enviar" />
          </children>

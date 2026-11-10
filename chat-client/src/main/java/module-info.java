@@ -10,6 +10,7 @@ module com.psp.chat.client {
     requires javafx.controls;
     requires javafx.fxml;
     requires org.slf4j;
+    requires javafx.graphics;
 
     opens com.psp.chat.client.view to javafx.fxml;
     exports com.psp.chat.client to javafx.graphics;

@@ -17,6 +17,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -24,7 +25,9 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.FlowPane;
 import javafx.stage.FileChooser;
+import javafx.stage.Popup;
 
 /**
  * Advanced view: the connected users on the left and one tab per conversation.
@@ -60,6 +63,20 @@ public final class AdvancedViewController implements ChatView {
 
     @FXML
     private Button sendButton;
+
+    @FXML private Button emojiButton;
+
+    private Popup emojiPopup;
+
+    private static final String[] EMOJIS = {
+        "😀","😂","😍","😎","😛",
+        "😢","😡","👍","👎","🙏",
+        "👏","🔥","💓","💔","🎉",
+        "🤔","😴","🙌","💯","✅",
+        "🧙‍♂️","🤓","🤑","😘","❎"
+    };
+
+
 
     private ChatSession session;
     private final Map<String, Tab> privateTabs = new HashMap<>();
@@ -277,5 +294,40 @@ public final class AdvancedViewController implements ChatView {
 
     private String titleOf(Tab tab) {
         return tab == generalTab ? UiText.GENERAL_TAB : (String) tab.getUserData();
+    }
+    
+    @FXML
+    private void onEmoji() {
+        if (emojiPopup == null) 
+            emojiPopup = buildEmojiPopup();
+        if (emojiPopup.isShowing()) {
+            emojiPopup.hide(); return; 
+        }
+
+        Bounds b = emojiButton.localToScreen(emojiButton.getBoundsInLocal());
+        emojiPopup.show(emojiButton, b.getMinX(), b.getMinY());
+        emojiPopup.setY(b.getMinY() - emojiPopup.getHeight() - 4);
+    }
+
+    private Popup buildEmojiPopup() {
+        FlowPane grid = new FlowPane(4, 4);
+        grid.setPrefWrapLength(240);
+        grid.setStyle("-fx-background-color: -fx-base; -fx-padding: 8; "
+                    + "-fx-border-color: gray; -fx-border-radius: 4; -fx-background-radius: 4;");
+
+        for (String emoji : EMOJIS) {
+            Button b = new Button(emoji);
+            b.setStyle("-fx-font-size: 18; -fx-background-color: transparent;");
+            b.setOnAction(e -> {
+                messageField.insertText(messageField.getLength(), emoji);
+                emojiPopup.hide();
+            });
+            grid.getChildren().add(b);
+        }
+
+        Popup popup = new Popup();
+        popup.setAutoHide(true);
+        popup.getContent().add(grid);
+        return popup;
     }
 }
